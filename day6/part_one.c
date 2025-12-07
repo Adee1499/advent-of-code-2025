@@ -11,7 +11,7 @@ typedef struct {
   unsigned int numbers[];
 } Problem;
 
-int parseProblems(FILE* fptr, Problem** problems);
+int parseProblems(FILE* fptr, Problem** problems, int noOfRows);
 
 int main() {
   FILE* fptr = fopen("input.txt", "r");
@@ -29,7 +29,7 @@ int main() {
 
   const int ROWS = lines - 1;
   Problem* problems[1000];
-  int noOfProblems = parseProblems(fptr, problems);
+  int noOfProblems = parseProblems(fptr, problems, ROWS);
 
   unsigned long long total = 0;
   for (int i = 0; i < noOfProblems; i++) {
@@ -84,24 +84,12 @@ void parseOperations(const char* s, Operation* operations) {
 }
 
 
-int parseProblems(FILE* fptr, Problem** problems) {
-  int lines = 0;
-  while(!feof(fptr))
-  {
-    char ch = fgetc(fptr);
-    if(ch == '\n')
-    {
-      lines++;
-    }
-  }
-  rewind(fptr);
-
-  const int ROWS = lines - 1;
+int parseProblems(FILE* fptr, Problem** problems, int noOfRows) {
   int noOfProblems = 0;
 
   char line[4096];
 
-  for (int i = 0; i < ROWS; i++) {
+  for (int i = 0; i < noOfRows; i++) {
     fgets(line, sizeof(line), fptr);
     unsigned int* numbers = malloc(1000 * sizeof(unsigned int));
     int count = parseNumbers(line, numbers);
@@ -116,7 +104,6 @@ int parseProblems(FILE* fptr, Problem** problems) {
     }
   }
 
-  // Get operations
   fgets(line, sizeof(line), fptr);
   Operation* operations = malloc(1000 * sizeof(Operation));
   parseOperations(line, operations);
